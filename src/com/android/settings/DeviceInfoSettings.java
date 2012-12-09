@@ -304,6 +304,20 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
 		    supported = (getPackageManager().getPackageInfo("com.turborom.turboota", 0).versionCode > 0);
 		} catch (PackageManager.NameNotFoundException e) {
 	    }
+        } else if (preference.getKey().equals(KEY_TURBO_VERSION)) {
+            System.arraycopy(mHits, 1, mHits, 0, mHits.length-1);
+            mHits[mHits.length-1] = SystemClock.uptimeMillis();
+            if (mHits[0] >= (SystemClock.uptimeMillis()-500)) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.putExtra("is_turbo", true);
+                intent.setClassName("android",
+                        com.android.internal.app.PlatLogoActivity.class.getName());
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Unable to start activity " + intent.toString());
+                }
+            }
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
