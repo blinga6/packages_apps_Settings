@@ -248,6 +248,8 @@ public class SettingsActivity extends Activity
      * <li>com.android.settings.category.system</li>
      */
     private static final String EXTRA_CATEGORY_KEY = "com.android.settings.category";
+    private static final String KEY_LOCKCLOCK = "lockclock";
+    private static final String KEY_LOCKCLOCK_PACKAGE_NAME = "com.cyanogenmod.lockclock";
 
     private static boolean sShowNoHomeNotice = false;
 
@@ -413,6 +415,7 @@ public class SettingsActivity extends Activity
 
     private ViewGroup mContent;
 
+    private PreferenceScreen mLockClock;
     private SearchView mSearchView;
     private MenuItem mSearchMenuItem;
     private boolean mSearchMenuItemExpanded = false;

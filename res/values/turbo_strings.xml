@@ -98,7 +98,7 @@
     <string name="google_title">Google</string>
 
     <!-- Embedded ViPER4Android -->
-    <string name="viper_settings_title">ViPER4Android</string>
+    <string name="viper_settings_title">Equalizer</string>
 
     <!-- Color picker -->
     <string name="dialog_color_picker">Color picker</string>
@@ -1191,7 +1191,7 @@
     <string name="lockscreen_vibrate_enabled_head">Vibrate when unlocking</string>
 
     <!-- Kernel Adiutor -->
-    <string name="kernel_adiutor_settings">Kernel Adiutor</string>
+    <string name="kernel_adiutor_settings">Performance</string>
 
     <!-- Header image shadow -->
     <string name="status_bar_custom_header_shadow_title">Contextual header shadow</string>

@@ -101,6 +101,37 @@
             android:id="@+id/custom_section"
             android:title="@string/header_category_custom" >
 
+        <!-- Turbo Tweaks -->
+        <dashboard-tile
+                android:id="@+id/turbotweaks"
+                android:title="@string/turbo_tweaks"
+                android:fragment="com.android.settings.turbo.turbotweaks.TurboTweaks"
+                android:icon="@drawable/ic_turbotweaks"
+                />
+
+        <!-- ViPER4Android -->
+        <dashboard-tile
+            android:id="@+id/viper_settings"
+            android:title="@string/viper_settings_title"
+            android:icon="@drawable/ic_viper4android" >
+            <intent
+               android:action="android.intent.action.MAIN"
+               android:targetClass="com.vipercn.viper4android_v2.activity.ViPER4Android"
+               android:targetPackage="com.vipercn.viper4android_v2" />
+        </dashboard-tile>
+
+
+ 	<!-- Kernel Auditor -->
+        <dashboard-tile
+            android:id="@+id/kernel_adiutor"
+            android:icon="@drawable/ic_kernel_adiutor"
+            android:title="@string/kernel_adiutor_settings">
+            <intent
+	       android:action="android.intent.action.MAIN"
+	       android:targetPackage="com.grarak.kerneladiutor"
+	       android:targetClass="com.grarak.kerneladiutor.MainActivity" />
+	</dashboard-tile>
+
 	<!-- Layers Manager -->
         <dashboard-tile
                 android:id="@+id/bitsyko_layers"
@@ -111,15 +142,6 @@
                     android:targetPackage="com.lovejoy777.rroandlayersmanager"
                     android:targetClass="com.lovejoy777.rroandlayersmanager.menu" />
         </dashboard-tile>
-
-        <!-- Turbo Tweaks -->
-        <dashboard-tile
-                android:id="@+id/turbotweaks"
-                android:title="@string/turbo_tweaks"
-                android:fragment="com.android.settings.turbo.turbotweaks.TurboTweaks"
-                android:icon="@drawable/ic_turbotweaks"
-                />
-
     </dashboard-category>
 
     <!-- DEVICE -->
@@ -211,15 +233,17 @@
                 android:icon="@drawable/ic_settings_accounts"
                 />
 
-        <PreferenceScreen 
-                android:id="@+id/lockclock_settings"
-		android:icon="@drawable/ic_settings_weather"
-		android:title="@string/lockclock_settings_title">
-		<intent android:action="android.intent.action.MAIN"
-			android:targetPackage="com.cyanogenmod.lockclock"
-			android:targetClass="com.cyanogenmod.lockclock.preference.WeatherPreferences" />
-	</PreferenceScreen>
-
+        <dashboard-tile
+	     android:id="@+id/lockclock_settings"
+         android:key="lockclock"
+	     android:icon="@drawable/ic_settings_weather"
+         android:title="@string/lockclock_settings_title">
+	 <intent 
+		 android:action="android.intent.action.MAIN"
+	      android:targetPackage="com.cyanogenmod.lockclock"
+	      android:targetClass="com.cyanogenmod.lockclock.preference.Preferences" 
+	       />
+		</dashboard-tile>
         <!-- Memory -->
         <dashboard-tile
                 android:id="@+id/manage_memory"
@@ -238,7 +262,6 @@
                 android:targetPackage="com.google.android.gms"
                 android:targetClass="com.google.android.gms.app.settings.GoogleSettingsLink" />
         </dashboard-tile>
-
     </dashboard-category>
 
     <!-- System -->
@@ -331,28 +354,6 @@
                 android:fragment="com.android.settings.privacyguard.PrivacyGuardManager"
                 android:icon="@drawable/ic_privacy_guard_alternate"
                 />
-
- 	<!-- Kernel Auditor -->
-        <dashboard-tile
-            android:id="@+id/kernel_adiutor"
-            android:icon="@drawable/ic_kernel_adiutor"
-            android:title="@string/kernel_adiutor_settings">
-            <intent
-	       android:action="android.intent.action.MAIN"
-	       android:targetPackage="com.grarak.kerneladiutor"
-	       android:targetClass="com.grarak.kerneladiutor.MainActivity" />
-	</dashboard-tile>
-
-        <!-- ViPER4Android -->
-        <dashboard-tile
-            android:id="@+id/viper_settings"
-            android:title="@string/viper_settings_title"
-            android:icon="@drawable/ic_viper4android" >
-            <intent
-               android:action="android.intent.action.MAIN"
-               android:targetClass="com.vipercn.viper4android_v2.activity.ViPER4Android"
-               android:targetPackage="com.vipercn.viper4android_v2" />
-        </dashboard-tile>
 
         <!-- Development -->
         <dashboard-tile
