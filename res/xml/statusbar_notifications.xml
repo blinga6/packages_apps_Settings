@@ -47,7 +47,12 @@
         android:summary="@string/status_bar_notif_count_summary"
         android:defaultValue="false" />
 
-    <PreferenceCategory
+    <com.android.settings.preference.SystemSettingSwitchPreference
+        android:key="toast_icon"
+	    android:title="@string/toast_icon_title"
+	    android:summary="@string/toast_icon_summary" />
+   
+	<PreferenceCategory
         android:key="notification_cat_colors"
         android:title="@string/colors_title">
 
