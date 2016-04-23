@@ -24,7 +24,13 @@
             android:summary="@string/block_on_secure_keyguard_summary"
             android:persistent="false" />
 
-         <PreferenceScreen
+    <com.android.settings.preference.SystemSettingSwitchPreference
+        android:key="lock_screen_show_current"
+        android:title="@string/lock_screen_show_current"
+        android:summary="@string/lock_screen_show_current_summary"
+        android:defaultValue="false" />
+ 
+        <PreferenceScreen
             android:title="@string/lockscreen_targets_message" 
 	    android:summary="@string/lockscreen_targets_summary" >
             <intent
