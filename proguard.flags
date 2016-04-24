@@ -20,6 +20,7 @@
 
 -keep class com.android.settings.turbo.*Settings
 -keep class com.android.settings.turbo.**
+-keep class com.android.settings.turbo.fragments.*
 
 # These would be stripped out since they are being created with reflection
 -keep class com.android.settings.dashboard.GenericSwitchToggle { *; }
