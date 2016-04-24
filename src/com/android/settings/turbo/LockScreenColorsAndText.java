@@ -48,6 +48,7 @@ public class LockScreenColorsAndText extends SettingsPreferenceFragment implemen
     private static final String LOCKSCREEN_CLOCK_COLOR = "lockscreen_clock_color";
     private static final String LOCKSCREEN_DATE_COLOR = "lockscreen_date_color";
     private static final String LOCK_CLOCK_FONTS = "lock_clock_fonts";
+    private static final String SHORTCUTS_COLOR = "ls_shortcut_icon_color";
 
     static final int DEFAULT = 0xffffffff;
     private static final int MENU_RESET = Menu.FIRST;
@@ -56,6 +57,7 @@ public class LockScreenColorsAndText extends SettingsPreferenceFragment implemen
     private ColorPickerPreference mLockscreenAlarmColorPicker;
     private ColorPickerPreference mLockscreenClockColorPicker;
     private ColorPickerPreference mLockscreenClockDateColorPicker;
+    private ColorPickerPreference mShorcutsColor;
     private ListPreference mLockClockFonts;
 
     @Override
@@ -83,6 +85,14 @@ public class LockScreenColorsAndText extends SettingsPreferenceFragment implemen
         hexColor = String.format("#%08x", (0xffffffff & intColor));
         mLockscreenOwnerInfoColorPicker.setSummary(hexColor);
         mLockscreenOwnerInfoColorPicker.setNewPreviewColor(intColor);
+        
+        mShorcutsColor = (ColorPickerPreference) findPreference(SHORTCUTS_COLOR);
+        mShorcutsColor.setOnPreferenceChangeListener(this);
+        intColor = Settings.System.getInt(getContentResolver(),
+                    Settings.System.LS_SHORTCUT_ICON_COLOR, TRANSPARENT);
+        hexColor = String.format("#%08x", (0xFFFFFFFF & intColor));
+        mShorcutsColor.setSummary(hexColor);
+        mShorcutsColor.setNewPreviewColor(intColor);
 
         mLockscreenAlarmColorPicker = (ColorPickerPreference) findPreference(LOCKSCREEN_ALARM_COLOR);
         mLockscreenAlarmColorPicker.setOnPreferenceChangeListener(this);
@@ -120,6 +130,14 @@ public class LockScreenColorsAndText extends SettingsPreferenceFragment implemen
             int intHex = ColorPickerPreference.convertToColorInt(hex);
             Settings.System.putInt(getActivity().getApplicationContext().getContentResolver(),
                     Settings.System.LOCKSCREEN_OWNER_INFO_COLOR, intHex);
+            return true;
+        } else if (preference == mShorcutsColor) {
+            String hex = ColorPickerPreference.convertToARGB(
+                    Integer.valueOf(String.valueOf(newValue)));
+            preference.setSummary(hex);
+            int intHex = ColorPickerPreference.convertToColorInt(hex);
+            Settings.System.putInt(getActivity().getApplicationContext().getContentResolver(),
+                    Settings.System.LS_SHORTCUT_ICON_COLOR, intHex);
             return true;
         } else if (preference == mLockscreenAlarmColorPicker) {
             String hex = ColorPickerPreference.convertToARGB(
@@ -208,6 +226,10 @@ public class LockScreenColorsAndText extends SettingsPreferenceFragment implemen
                 Settings.System.LOCKSCREEN_DATE_COLOR, DEFAULT);
         mLockscreenClockDateColorPicker.setNewPreviewColor(DEFAULT);
         mLockscreenClockDateColorPicker.setSummary(R.string.default_string);
+                Settings.System.LS_SHORTCUT_ICON_COLOR, TRANSPARENT);
+        mShorcutsColor.setNewPreviewColor(TRANSPARENT);
+        mShorcutsColor.setSummary(R.string.default_string);
+        Settings.System.putInt(getContentResolver(),
     }
 
     @Override
