@@ -89,7 +89,7 @@ public class LockScreenColorsAndText extends SettingsPreferenceFragment implemen
         mShorcutsColor = (ColorPickerPreference) findPreference(SHORTCUTS_COLOR);
         mShorcutsColor.setOnPreferenceChangeListener(this);
         intColor = Settings.System.getInt(getContentResolver(),
-                    Settings.System.LS_SHORTCUT_ICON_COLOR, TRANSPARENT);
+                    Settings.System.LS_SHORTCUT_ICON_COLOR, DEFAULT);
         hexColor = String.format("#%08x", (0xFFFFFFFF & intColor));
         mShorcutsColor.setSummary(hexColor);
         mShorcutsColor.setNewPreviewColor(intColor);
@@ -226,10 +226,10 @@ public class LockScreenColorsAndText extends SettingsPreferenceFragment implemen
                 Settings.System.LOCKSCREEN_DATE_COLOR, DEFAULT);
         mLockscreenClockDateColorPicker.setNewPreviewColor(DEFAULT);
         mLockscreenClockDateColorPicker.setSummary(R.string.default_string);
-                Settings.System.LS_SHORTCUT_ICON_COLOR, TRANSPARENT);
-        mShorcutsColor.setNewPreviewColor(TRANSPARENT);
+		Settings.System.putInt(getContentResolver(),
+                Settings.System.LS_SHORTCUT_ICON_COLOR, DEFAULT);
+        mShorcutsColor.setNewPreviewColor(DEFAULT);
         mShorcutsColor.setSummary(R.string.default_string);
-        Settings.System.putInt(getContentResolver(),
     }
 
     @Override
