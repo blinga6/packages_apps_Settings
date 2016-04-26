@@ -64,12 +64,14 @@ public class QSPanel extends SettingsPreferenceFragment implements
     private static final String CUSTOM_HEADER_IMAGE = "status_bar_custom_header";
     private static final String DAYLIGHT_HEADER_PACK = "daylight_header_pack";
     private static final String DEFAULT_HEADER_PACKAGE = "com.android.systemui";
+    private static final String ENABLE_TASK_MANAGER = "enable_task_manager";
 
     private ListPreference mNumColumns;
     private ListPreference mQuickPulldown;
     private SeekBarPreference mHeaderShadow;
     private ListPreference mDaylightHeaderPack;
     private SwitchPreference mCustomHeaderImage;
+    private SwitchPreference mEnableTaskManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,6 +145,10 @@ public class QSPanel extends SettingsPreferenceFragment implements
         mNumColumns.setValue(String.valueOf(numColumns));
         updateNumColumnsSummary(numColumns);
         mNumColumns.setOnPreferenceChangeListener(this);
+		
+	mEnableTaskManager = (SwitchPreference) findPreference(ENABLE_TASK_MANAGER);
+        mEnableTaskManager.setChecked((Settings.System.getInt(resolver,
+                Settings.System.ENABLE_TASK_MANAGER, 0) == 1));
 
     }
 
@@ -254,6 +260,11 @@ public class QSPanel extends SettingsPreferenceFragment implements
 		Settings.System.STATUS_BAR_CUSTOM_HEADER, value ? 1 : 0);
             mDaylightHeaderPack.setEnabled(value);
             return true;
+       } else if  (preference == mEnableTaskManager) {
+            boolean checked = ((SwitchPreference)preference).isChecked();
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.ENABLE_TASK_MANAGER, checked ? 1:0);
+           return true;
 	}
 	return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
