@@ -47,6 +47,13 @@
         android:summary="@string/status_bar_notif_count_summary"
         android:defaultValue="false" />
 
+    <!-- Shake to clean notifications -->
+     <com.android.settings.preference.SystemSettingSwitchPreference
+        android:key="shake_to_clean_notifications"
+        android:title="@string/shake_to_clean_notifications_title"
+        android:summary="@string/shake_to_clean_notifications_summary"
+        android:defaultValue="false" />
+
     <com.android.settings.preference.SystemSettingSwitchPreference
         android:key="toast_icon"
 	    android:title="@string/toast_icon_title"

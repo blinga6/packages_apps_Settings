@@ -16,23 +16,36 @@
 
 package com.android.settings;
 
+import android.app.Activity;
+import android.app.AlertDialog; 
+import android.app.Dialog;
 import android.app.backup.IBackupManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.provider.SearchIndexableResource;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.widget.ListView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.settings.search.BaseSearchIndexProvider;
@@ -52,6 +65,7 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Index
     private static final String GSETTINGS_PROVIDER = "com.google.settings";
     private static final String BACKUP_DATA = "backup_data";
     private static final String AUTO_RESTORE = "auto_restore";
+    private static final String RESET_PREFERENCES = "user_preferences_reset";
     private static final String CONFIGURE_ACCOUNT = "configure_account";
     private static final String BACKUP_INACTIVE = "backup_inactive";
     private static final String NETWORK_RESET = "network_reset";
@@ -60,6 +74,7 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Index
     private IBackupManager mBackupManager;
     private PreferenceScreen mBackup;
     private SwitchPreference mAutoRestore;
+    private Preference mResetUserPreferences;
     private PreferenceScreen mConfigure;
     private boolean mEnabled;
 
@@ -68,6 +83,8 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Index
         return MetricsLogger.PRIVACY;
     }
 
+   private HashMap<String, String> customPrefs = new HashMap<String, String>();
+ 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +105,19 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Index
         mAutoRestore.setOnPreferenceChangeListener(preferenceChangeListener);
 
         mConfigure = (PreferenceScreen) screen.findPreference(CONFIGURE_ACCOUNT);
+
+        mResetUserPreferences = screen.findPreference(RESET_PREFERENCES);
+        mResetUserPreferences.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                updateActiveCustomPreferences();
+                if (customPrefs.size() > 1) {
+                    showResetList();
+                } else {
+                    showResetDialog();
+                }
+                return true;
+            }
+        });
 
         Set<String> keysToRemove = new HashSet<>();
         getNonVisibleKeys(getActivity(), keysToRemove);
@@ -164,6 +194,100 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Index
         mConfigure.setEnabled(configureEnabled);
         mConfigure.setIntent(configIntent);
         setConfigureSummary(configSummary);
+    }
+
+     private void showResetDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.reset_user_preferences_title);
+        builder.setMessage(R.string.reset_user_preferences_dialog);
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                for(String setting : Settings.System.SETTINGS_TO_RESET) {
+                    Settings.System.putInt(getContentResolver(), setting, 0);
+                }
+            }
+        });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void showResetList() {
+        final CharSequence[] cs =
+                    customPrefs.values().toArray(new CharSequence[customPrefs.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.reset_user_preferences_title)
+               .setMultiChoiceItems(cs, null, null)
+               .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog ad = ((AlertDialog) dialog);
+                        ListView resetList = ad.getListView();
+                        int resetCount = resetList.getCheckedItemCount();
+                        if (resetCount > 0) {
+                            SparseBooleanArray checked = resetList.getCheckedItemPositions();
+                            for (int i = 0; i < resetList.getCount(); i++) {
+                                if (checked.get(i)) {
+                                    String value = resetList.getItemAtPosition(i).toString();
+                                    Settings.System.putInt(getContentResolver(), getKey(value), 0);
+                                }
+                            }
+                        }
+                        dialog.dismiss();
+                    }
+                })
+               .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void updateActiveCustomPreferences() {
+        customPrefs.clear();
+        try {
+            Context con = getActivity().getApplicationContext()
+                                       .createPackageContext("com.android.systemui", 0);
+            Resources r = con.getResources();
+            for(String setting : Settings.System.SETTINGS_TO_RESET) {
+                if (!(Settings.System.getInt(getContentResolver(), setting, 0) == 0)) {
+                    String key = setting.toLowerCase();
+                    int resId = r.getIdentifier(setting, "string", "com.android.systemui");
+                    if (resId != 0) {
+                        try {
+                            String value = (String) r.getText(resId);
+                            customPrefs.put(key, value);
+                        } catch (NotFoundException e) {
+                            Log.e(TAG, "Resource not found for: " + setting, e);
+                        }
+                    } else {
+                        Log.v(TAG, "Missing string for: " + setting);
+                    }
+                }
+            }
+        } catch (NameNotFoundException e) {
+            Log.e(TAG, "NameNotFoundException", e);
+        }
+    }
+
+    private String getKey(String value) {
+        String key = null;
+        for(Map.Entry<String, String> entry : customPrefs.entrySet()) {
+            if((value == null && entry.getValue() == null) ||
+                    (value != null && value.equals(entry.getValue()))) {
+                return entry.getKey();
+            }
+        }
+        return key;
     }
 
     private void setConfigureSummary(String summary) {
